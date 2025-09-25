@@ -1,2 +1,2 @@
 #!/bin/bash
-poetry run fastapi dev unisphere/main.py
+poetry run fastapi dev app/main.py
