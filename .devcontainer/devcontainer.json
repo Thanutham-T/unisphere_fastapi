@@ -1,0 +1,91 @@
+{
+    "name": "FastAPI DevContainer",
+    "dockerComposeFile": "docker-compose.dev.yml",
+    "service": "app",
+    "workspaceFolder": "/home/vscode/workspace",
+    "remoteUser": "vscode",
+    "features": {
+        "ghcr.io/devcontainers/features/git:1": {},
+        "ghcr.io/devcontainers/features/github-cli:1": {},
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers-extra/features/poetry:2": {}
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "python.pythonPath": "home/vscode/workspace/.venv/bin/python3",
+                "python.defaultInterpreterPath": "/home/vscode/workspace/.venv/bin/python",
+                "python.formatting.provider": "black",
+                "python.linting.enabled": false,
+                "python.linting.pylintEnabled": false,
+                "python.testing.pytestEnabled": true,
+                "python.testing.pytestArgs": [
+                    "tests"
+                ],
+                "python.testing.autoTestDiscoverOnSaveEnabled": true,
+                "python.testing.unittestEnabled": false,
+                "editor.defaultFormatter": "ms-python.black-formatter",
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.organizeImports": "explicit"
+                },
+                "python.terminal.activateEnvironment": false,
+                "terminal.integrated.defaultProfile.linux": "bash",
+                "files.watcherExclude": {
+                    "**/node_modules/**": true,
+                    "**/.git/objects/**": true,
+                    "**/.git/subtree-cache/**": true,
+                    "**/data/**": true,
+                    "**/logs/**": true,
+                    "**/__pycache__/**": true,
+                    "**/.*cache/**": true
+                }
+            },
+            "extensions": [
+                "ms-python.python",
+                "ms-python.pylint",
+                "ms-python.black-formatter",
+                "ms-python.isort",
+                "ms-python.mypy-type-checker",
+                "ms-python.debugpy",
+                "ms-toolsai.jupyter",
+                "ms-vscode.vscode-json",
+                "ms-azuretools.vscode-docker",
+                "github.copilot",
+                "github.copilot-chat",
+                "redhat.vscode-yaml",
+                "tamasfe.even-better-toml",
+                "charliermarsh.ruff",
+                "Redis.redis-for-vscode",
+                "vivaxy.vscode-conventional-commits"
+            ]
+        }
+    },
+    "postCreateCommand": "poetry install --no-interaction",
+    "updateContentCommand": "poetry install --no-interaction",
+    "shutdownAction": "stopCompose",
+    "forwardPorts": [
+        8000,
+        5432,
+        5050,
+        6379
+    ],
+    "portsAttributes": {
+        "8000": {
+            "label": "FastAPI App",
+            "onAutoForward": "notify"
+        },
+        "5432": {
+            "label": "PostgreSQL",
+            "onAutoForward": "silent"
+        },
+        "5050": {
+            "label": "PgAdmin",
+            "onAutoForward": "silent"
+        },
+        "6379": {
+            "label": "Redis",
+            "onAutoForward": "silent"
+        }
+    }
+}

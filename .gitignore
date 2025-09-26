@@ -4,14 +4,17 @@ __pycache__/
 *$py.class
 
 # Virtual environment
+.venv/
 venv/
 .env
 .env.local
 .env.dev
+.env.prod
+.env.dev.app
+.env.prod.app
 
 # Poetry
 .poetry/
-poetry.lock
 
 # FastAPI logs
 logs/
@@ -39,3 +42,9 @@ htmlcov/
 # Docker
 *.dockerignore
 docker-compose.override.yml
+
+# pgdata
+.pgdata
+
+# db Config
+dbconfig
