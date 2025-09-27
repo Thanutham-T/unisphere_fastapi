@@ -1,0 +1,19 @@
+services:
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    image: unisphere:test
+    container_name: unisphere-test-runner
+    volumes:
+      - ./html:/home/app/test-reports/coverage:rw
+    environment:
+      - ENVIRONMENT=test
+    env_file:
+      - ./.devcontainer/.env.dev
+    command: >
+      bash -c "
+        cd /home/app &&
+        poetry install --no-interaction &&
+        poetry run pytest ./tests/ -v --cov=unisphere --cov-report=term --cov-report=html:/home/app/test-reports/coverage
+      "

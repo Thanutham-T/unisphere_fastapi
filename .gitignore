@@ -48,3 +48,8 @@ docker-compose.override.yml
 
 # db Config
 dbconfig
+
+# test
+.cache
+.local
+html/
