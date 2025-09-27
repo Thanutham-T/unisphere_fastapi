@@ -1,0 +1,12 @@
+# Ignore local Python environment and caches
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.swp
+*.egg-info/
+*.dist-info/
+*.venv/
+.venv/
+.local/
+pipx/

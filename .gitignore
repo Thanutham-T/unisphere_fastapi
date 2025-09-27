@@ -39,10 +39,6 @@ htmlcov/
 # Pytest cache
 .pytest_cache/
 
-# Docker
-*.dockerignore
-docker-compose.override.yml
-
 # pgdata
 .pgdata
 
