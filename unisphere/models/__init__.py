@@ -10,6 +10,7 @@ from unisphere.core.config import get_settings
 from unisphere.models.greeting_model import Greeting, GreetingBase
 
 engine: AsyncEngine = None
+redis_client: redis.Redis | None = None
 settings = get_settings()
 
 
@@ -59,15 +60,20 @@ async def get_redis() -> AsyncIterator[redis.Redis]:
     Yields a shared async Redis instance.
     """
     global redis_client
-    redis_client = redis.from_url(settings.REDIS_URL, decode_responses=True)
+    if redis_client is None:
+        redis_client = redis.from_url(
+            settings.REDIS_URL, decode_responses=True
+        )
     try:
         yield redis_client
     finally:
-        # Optionally, you can close the connection on app shutdown
-        # but usually we keep a single client open during app lifetime
         pass
 
 
 async def close_redis():
-    """Close Redis connection."""
-    await redis_client.close()
+    """Close Redis connection if initialized."""
+    global redis_client
+    if redis_client is not None:
+        await redis_client.close()
+        await redis_client.connection_pool.disconnect()
+        redis_client = None
