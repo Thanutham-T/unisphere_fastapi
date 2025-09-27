@@ -53,3 +53,8 @@ dbconfig
 .cache
 .local
 html/
+
+# deploy
+certs
+nginx
+data
