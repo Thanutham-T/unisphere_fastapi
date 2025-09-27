@@ -55,6 +55,4 @@ dbconfig
 html/
 
 # deploy
-certs
-nginx
 data
