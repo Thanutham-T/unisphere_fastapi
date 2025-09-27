@@ -8,11 +8,11 @@ services:
     volumes:
       - ../:/home/vscode/workspace:cached
       - unisphere-dev-venv:/home/vscode/workspace/.venv
-      - //var/run/docker.sock:/var/run/docker.sock
     command: sleep infinity
     depends_on:
       - postgres
       - redis
+    network_mode: "host"
 
   postgres:
     image: postgres:17.0
