@@ -8,7 +8,7 @@ services:
     env_file:
       - ./.env.prod
     volumes:
-      - ./data/uploads:/var/app/uploads:rw
+      - uploads:/var/app/uploads:rw
       - ./logs:/app/logs:rw
     networks:
       - unisphere-network
@@ -76,5 +76,5 @@ volumes:
     driver: local
   redis_data:
     driver: local
-  certs_data:
+  uploads:
     driver: local
