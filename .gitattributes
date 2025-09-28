@@ -1,0 +1,8 @@
+# Set shell scripts to use LF
+*.sh text eol=lf
+
+# Python files
+*.py text eol=lf
+
+# All text files (optional)
+* text=auto

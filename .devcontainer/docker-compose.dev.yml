@@ -12,6 +12,7 @@ services:
     depends_on:
       - postgres
       - redis
+    network_mode: "host"
 
   postgres:
     image: postgres:17.0

@@ -39,12 +39,16 @@ htmlcov/
 # Pytest cache
 .pytest_cache/
 
-# Docker
-*.dockerignore
-docker-compose.override.yml
-
 # pgdata
 .pgdata
 
 # db Config
 dbconfig
+
+# test
+.cache
+.local
+html/
+
+# deploy
+data

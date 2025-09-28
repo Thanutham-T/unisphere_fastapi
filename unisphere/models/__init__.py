@@ -1,4 +1,4 @@
-from typing import AsyncIterator, Optional
+from typing import AsyncIterator
 
 import redis.asyncio as redis
 from sqlalchemy.ext.asyncio import (AsyncEngine, async_sessionmaker,
@@ -8,8 +8,8 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from unisphere.core.config import get_settings
 
-engine: Optional[AsyncEngine] = None
-redis_client: Optional[redis.Redis] = None
+engine: AsyncEngine | None = None
+redis_client: redis.Redis | None = None
 settings = get_settings()
 
 
@@ -65,18 +65,18 @@ async def get_redis() -> AsyncIterator[redis.Redis]:
     global redis_client
     if redis_client is None:
         redis_client = redis.from_url(
-            settings.REDIS_URL, decode_responses=True)
+            settings.REDIS_URL, decode_responses=True
+        )
     try:
         yield redis_client
     finally:
-        # Optionally, you can close the connection on app shutdown
-        # but usually we keep a single client open during app lifetime
         pass
 
 
 async def close_redis():
-    """Close Redis connection."""
+    """Close Redis connection if initialized."""
     global redis_client
     if redis_client is not None:
         await redis_client.close()
+        await redis_client.connection_pool.disconnect()
         redis_client = None
