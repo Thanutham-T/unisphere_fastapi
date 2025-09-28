@@ -31,7 +31,7 @@ dev:
 # =========================
 .PHONY: prod-up
 prod-up:
-	$(DOCKER_COMPOSE) --env-file ./.env.prod -f ./docker-compose.prod.yml up -d --scale unisphere-prod=2
+	$(DOCKER_COMPOSE) --env-file ./.env.prod -f ./docker-compose.prod.yml up -d --scale unisphere-prod=2 --build
 
 .PHONY: prod-down
 prod-down:
