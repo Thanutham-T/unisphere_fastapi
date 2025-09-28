@@ -87,12 +87,12 @@ async def delete_greeting(greeting_id: int, service: GreetingServiceInterface = 
 
 
 @router.get("/redis/last-greeted")
-async def last_greeted(redis: redis.Redis = Depends(get_redis)):
-    name = await redis.get("last_greeted")
+async def last_greeted(redis_client: redis.Redis = Depends(get_redis)):
+    name = await redis_client.get("last_greeted")
     return {"last_greeted": name}
 
 
 @router.post("/redis/greet/{name}")
-async def greet(name: str, redis: redis.Redis = Depends(get_redis)):
-    await redis.set("last_greeted", name)
+async def greet(name: str, redis_client: redis.Redis = Depends(get_redis)):
+    await redis_client.set("last_greeted", name)
     return {"message": f"Hello, {name}!"}

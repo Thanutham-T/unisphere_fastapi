@@ -1,15 +1,15 @@
-from typing import AsyncIterator
+from typing import AsyncIterator, Optional
 
 import redis.asyncio as redis
-from sqlalchemy.ext.asyncio import AsyncEngine, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import (AsyncEngine, async_sessionmaker,
+                                    create_async_engine)
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from unisphere.core.config import get_settings
-from unisphere.models.greeting_model import Greeting, GreetingBase
 
-engine: AsyncEngine = None
+engine: Optional[AsyncEngine] = None
+redis_client: Optional[redis.Redis] = None
 settings = get_settings()
 
 
@@ -28,6 +28,10 @@ async def init_db():
 
 async def create_db_and_tables():
     """Create database tables."""
+    if engine is None:
+        raise RuntimeError(
+            "Database engine is not initialized. Call init_db() first.")
+
     async with engine.begin() as conn:
         # await conn.run_sync(SQLModel.metadata.drop_all)
         await conn.run_sync(SQLModel.metadata.create_all)
@@ -36,11 +40,11 @@ async def create_db_and_tables():
 async def get_session() -> AsyncIterator[AsyncSession]:
     """Get async database session."""
     if engine is None:
-        raise Exception(
+        raise RuntimeError(
             "Database engine is not initialized. Call init_db() first.")
 
-    async_session = sessionmaker(
-        engine, class_=AsyncSession, expire_on_commit=False)
+    async_session = async_sessionmaker(
+        bind=engine, class_=AsyncSession, expire_on_commit=False)
     async with async_session() as session:
         yield session
 
@@ -59,7 +63,9 @@ async def get_redis() -> AsyncIterator[redis.Redis]:
     Yields a shared async Redis instance.
     """
     global redis_client
-    redis_client = redis.from_url(settings.REDIS_URL, decode_responses=True)
+    if redis_client is None:
+        redis_client = redis.from_url(
+            settings.REDIS_URL, decode_responses=True)
     try:
         yield redis_client
     finally:
@@ -70,4 +76,7 @@ async def get_redis() -> AsyncIterator[redis.Redis]:
 
 async def close_redis():
     """Close Redis connection."""
-    await redis_client.close()
+    global redis_client
+    if redis_client is not None:
+        await redis_client.close()
+        redis_client = None
