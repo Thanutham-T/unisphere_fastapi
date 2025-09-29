@@ -2,7 +2,12 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from unisphere.models.user_model import User
-from unisphere.schemas.user_schema import UserCreate, UserLogin, UserResponse
+from unisphere.schemas.user_schema import (
+    UserCreate,
+    UserLogin,
+    UserResponse,
+    UserUpdate,
+)
 
 
 class AuthServiceInterface(ABC):
@@ -41,4 +46,9 @@ class AuthServiceInterface(ABC):
     @abstractmethod
     async def verify_token(self, token: str) -> Optional[dict]:
         """Verify JWT token"""
+        pass
+
+    @abstractmethod
+    async def update_user_profile(self, user_id: int, user_data: UserUpdate) -> Optional[User]:
+        """Update user profile"""
         pass

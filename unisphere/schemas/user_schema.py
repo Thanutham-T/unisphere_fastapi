@@ -90,21 +90,19 @@ class UserUpdate(BaseModel):
 class User(UserBase):
     id: int
     student_id: Optional[str] = None
-    profile_image_url: Optional[str] = None
-    is_active: bool
-
-    # Education information
     faculty: Optional[str] = None
     department: Optional[str] = None
     major: Optional[str] = None
     curriculum: Optional[str] = None
     education_level: Optional[str] = None
     campus: Optional[str] = None
-
     created_at: datetime
     updated_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# Personal info for step 1 registration
 
 
 class Token(BaseModel):

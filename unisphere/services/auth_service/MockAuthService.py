@@ -6,10 +6,14 @@ import jwt
 
 from unisphere.core.config import get_settings
 from unisphere.models.user_model import User
-from unisphere.schemas.user_schema import (Token, UserCreate, UserLogin,
-                                           UserResponse)
-from unisphere.services.auth_service.AuthServiceInterface import \
-    AuthServiceInterface
+from unisphere.schemas.user_schema import (
+    Token,
+    UserCreate,
+    UserLogin,
+    UserResponse,
+    UserUpdate,
+)
+from unisphere.services.auth_service.AuthServiceInterface import AuthServiceInterface
 
 
 class MockAuthService(AuthServiceInterface):
@@ -154,3 +158,30 @@ class MockAuthService(AuthServiceInterface):
         token = Token(**tokens)
 
         return UserResponse.from_db_user(user, token)
+
+    async def update_user_profile(self, user_id: int, user_data: UserUpdate) -> Optional[User]:
+        """Update user profile in mock storage"""
+        try:
+            # Find user by id
+            user = None
+            for stored_user in self.users.values():
+                if stored_user.id == user_id:
+                    user = stored_user
+                    break
+
+            if not user:
+                return None
+
+            # Update only provided fields
+            update_data = user_data.model_dump(exclude_unset=True)
+            for field, value in update_data.items():
+                setattr(user, field, value)
+
+            # Update timestamp
+            user.updated_at = datetime.now()
+
+            return user
+
+        except Exception as e:
+            print(f"Error updating user profile: {e}")
+            return None

@@ -8,10 +8,14 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from unisphere.core.config import get_settings
 from unisphere.models.user_model import User
-from unisphere.schemas.user_schema import (Token, UserCreate, UserLogin,
-                                           UserResponse)
-from unisphere.services.auth_service.AuthServiceInterface import \
-    AuthServiceInterface
+from unisphere.schemas.user_schema import (
+    Token,
+    UserCreate,
+    UserLogin,
+    UserResponse,
+    UserUpdate,
+)
+from unisphere.services.auth_service.AuthServiceInterface import AuthServiceInterface
 
 
 class DBAuthService(AuthServiceInterface):
@@ -159,3 +163,34 @@ class DBAuthService(AuthServiceInterface):
         token = Token(**tokens)
 
         return UserResponse.from_db_user(user, token)
+
+    async def update_user_profile(self, user_id: int, user_data: UserUpdate) -> Optional[User]:
+        """Update user profile"""
+        try:
+            # Get user from database
+            stmt = select(User).where(User.id == user_id)
+            result = await self.session.exec(stmt)
+            user = result.first()
+
+            if not user:
+                return None
+
+            # Update only provided fields
+            update_data = user_data.model_dump(exclude_unset=True)
+            for field, value in update_data.items():
+                setattr(user, field, value)
+
+            # Update timestamp
+            user.updated_at = datetime.now()
+
+            # Save to database
+            self.session.add(user)
+            await self.session.commit()
+            await self.session.refresh(user)
+
+            return user
+
+        except Exception as e:
+            await self.session.rollback()
+            print(f"Error updating user profile: {e}")
+            return None
