@@ -1,9 +1,6 @@
 services:
   unisphere-prod:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
-    image: unisphere:latest
+    image: thanutham/unisphere_fastapi:2981c17
     restart: unless-stopped
     env_file:
       - ./.env.prod
