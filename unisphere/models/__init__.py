@@ -17,9 +17,10 @@ async def init_db():
     """Initialize the database engine and create tables."""
     global engine
 
+    # Use configured DATABASE_URL; must be an async driver URL (e.g., sqlite+aiosqlite, postgresql+asyncpg)
     engine = create_async_engine(
-        settings.DATABASE_URL,
-        echo=True,
+        'postgresql+asyncpg://unidev:unidev@localhost:5432/unisphere_dev_db',
+        echo=False,
         future=True,
     )
 
