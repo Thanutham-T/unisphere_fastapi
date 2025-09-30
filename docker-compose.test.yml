@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile.test
     image: unisphere:test
     container_name: unisphere-test-runner
+    user: root
     volumes:
       - ./html:/home/app/test-reports/coverage:rw
     environment:
