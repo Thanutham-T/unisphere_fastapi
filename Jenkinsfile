@@ -115,7 +115,7 @@ pipeline {
                 withCredentials([file(credentialsId: 'redisdb-config', variable: 'SECRET_CONF_FILE')]) {
                     sh '''
                         mkdir -p dbconfig
-                        cp "$SECRET_CONF_FILE" ./dbconfig 
+                        cp "$SECRET_CONF_FILE" ./dbconfig/redis.conf
                     '''
                 }
             }
@@ -138,6 +138,7 @@ pipeline {
                         docker compose --env-file ./.env.prod -f ./docker-compose.prod.yml up -d --scale unisphere-prod=2
                         docker logout
                         rm ./.env.prod
+                        rm ./dbconfig/redis.conf
                     '''
                 }
             }
