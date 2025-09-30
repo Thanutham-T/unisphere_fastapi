@@ -51,15 +51,13 @@ services:
       retries: 3
 
   nginx-proxy:
-    image: nginxproxy/nginx-proxy
+    image: nginx:custom
     container_name: nginx-proxy
     ports:
       - 80:80
       - 443:443
     restart: always
     volumes:
-      - ./nginx/conf/:/etc/nginx/conf.d/:rw
-      - ./nginx/certs:/etc/nginx/ssl
       - /var/run/docker.sock:/tmp/docker.sock:ro
     networks:
       - unisphere-network
