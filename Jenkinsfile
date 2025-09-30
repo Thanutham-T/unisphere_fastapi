@@ -96,6 +96,15 @@ pipeline {
                 }
             }
         }
+
+        stage('Approval') {
+            steps {
+                script {
+                    input message: 'Proceed with deployment?'
+                }
+            }
+        }
+
         
         stage('Checkout for CD') {
             agent { label 'agent-cd' }
