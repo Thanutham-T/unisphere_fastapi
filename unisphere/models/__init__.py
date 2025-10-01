@@ -7,6 +7,12 @@ from sqlmodel import SQLModel, select, text
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 from unisphere.core.config import get_settings
+from unisphere.models.announcement_model import Announcement  # noqa: F401
+from unisphere.models.event_model import Event, EventRegistration  # noqa: F401
+from unisphere.models.greeting_model import Greeting  # noqa: F401
+
+# Import all models so they are registered with SQLModel
+from unisphere.models.user_model import User, UserBase  # noqa: F401
 
 from .branch_model import *
 from .checkin_model import *
@@ -29,7 +35,7 @@ settings = get_settings()
 
 async def init_db():
     """Initialize the database engine and create tables."""
-    global engine
+    global engine  # noqa: PLW0603,RUF100
 
     # Use configured DATABASE_URL; must be an async driver URL (e.g., sqlite+aiosqlite, postgresql+asyncpg)
     engine = create_async_engine(
@@ -65,7 +71,7 @@ async def get_session() -> AsyncIterator[AsyncSession]:
 
 async def close_db():
     """Close database connection."""
-    global engine
+    global engine  # noqa: PLW0603,RUF100
     if engine is not None:
         await engine.dispose()
         engine = None
@@ -76,7 +82,7 @@ async def get_redis() -> AsyncIterator[redis.Redis]:
     Dependency to get Redis client.
     Yields a shared async Redis instance.
     """
-    global redis_client
+    global redis_client  # noqa: PLW0603,RUF100
     if redis_client is None:
         redis_client = redis.from_url(settings.REDIS_URL, decode_responses=True)
     try:
@@ -87,7 +93,7 @@ async def get_redis() -> AsyncIterator[redis.Redis]:
 
 async def close_redis():
     """Close Redis connection if initialized."""
-    global redis_client
+    global redis_client  # noqa: PLW0603,RUF100
     if redis_client is not None:
         await redis_client.close()
         await redis_client.connection_pool.disconnect()

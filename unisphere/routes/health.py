@@ -1,9 +1,8 @@
-from fastapi import APIRouter, Depends
-from fastapi import HTTPException
-from unisphere import models
-from sqlmodel.ext.asyncio.session import AsyncSession
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy import text
+from sqlmodel.ext.asyncio.session import AsyncSession
 
+from unisphere import models
 
 router = APIRouter(prefix="/health")
 
@@ -17,9 +16,10 @@ async def health_check(
     session: AsyncSession = Depends(models.get_session),
 ) -> dict[str, str]:
     try:
-        q = await session.exec(text("SELECT 1"))
-        q.fetchall()
+        result = await session.execute(text("SELECT 1"))
+        result.fetchall()
 
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Health check failed: {str(e)}")
+        raise HTTPException(
+            status_code=500, detail=f"Health check failed: {str(e)}") from e
     return {"status": "ok", "message": "Application is healthy"}

@@ -5,10 +5,14 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 from unisphere.core.config import get_settings
 from unisphere.models import get_session
 from unisphere.schemas.user_schema import User as SchemaUser
-from unisphere.schemas.user_schema import (UserCreate, UserLogin, UserRegister,
-                                           UserResponse)
-from unisphere.services.auth_service.AuthServiceInterface import \
-    AuthServiceInterface
+from unisphere.schemas.user_schema import (
+    UserCreate,
+    UserLogin,
+    UserRegister,
+    UserResponse,
+    UserUpdate,
+)
+from unisphere.services.auth_service.AuthServiceInterface import AuthServiceInterface
 from unisphere.services.auth_service.DBAuthService import DBAuthService
 from unisphere.services.auth_service.MockAuthService import MockAuthService
 
@@ -151,6 +155,17 @@ async def get_me(current_user: SchemaUser = Depends(get_current_user)):
     return current_user
 
 
+@router.get(
+    "/profile",
+    summary="Get user profile",
+    description="Get current user profile information",
+    response_model=SchemaUser
+)
+async def get_profile(current_user: SchemaUser = Depends(get_current_user)):
+    """Get current user profile information"""
+    return current_user
+
+
 # Endpoint สำหรับ Flutter dropdowns
 @router.get(
     "/education-options",
@@ -205,3 +220,35 @@ async def get_education_options():
             ]
         }
     }
+
+
+@router.put("/profile", response_model=SchemaUser)
+async def update_profile(
+    profile_data: UserUpdate,
+    current_user: SchemaUser = Depends(get_current_user),
+    auth_service: AuthServiceInterface = Depends(get_auth_service)
+):
+    """Update user profile"""
+    try:
+        user_id = current_user.id
+        updated_user = await auth_service.update_user_profile(user_id, profile_data)
+
+        if not updated_user:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="User not found"
+            )
+
+        # Convert to schema using model_validate
+        return SchemaUser.model_validate(updated_user)
+
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        ) from e
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update profile: {str(e)}"
+        ) from e
