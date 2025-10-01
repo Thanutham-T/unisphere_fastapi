@@ -1,9 +1,6 @@
 services:
   unisphere-prod:
-    build:
-      context: .
-      dockerfile: Dockerfile.prod
-    image: unisphere:latest
+    image: thanutham/unisphere_fastapi:2981c17
     restart: unless-stopped
     env_file:
       - ./.env.prod
@@ -54,15 +51,13 @@ services:
       retries: 3
 
   nginx-proxy:
-    image: nginxproxy/nginx-proxy
+    image: nginx:custom
     container_name: nginx-proxy
     ports:
       - 80:80
       - 443:443
     restart: always
     volumes:
-      - ./nginx/conf/:/etc/nginx/conf.d/:ro
-      - ./nginx/certs:/etc/nginx/ssl
       - /var/run/docker.sock:/tmp/docker.sock:ro
     networks:
       - unisphere-network

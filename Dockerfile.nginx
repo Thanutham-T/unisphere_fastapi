@@ -1,0 +1,13 @@
+# Use the official nginx-proxy image as base
+FROM nginxproxy/nginx-proxy:latest
+
+# Copy your custom nginx config files into the container
+# These will be loaded by nginx-proxy automatically
+COPY ./nginx/conf /etc/nginx/conf.d/
+
+# Copy your SSL certificates if needed
+# Make sure the directory structure matches what nginx expects
+COPY ./nginx/certs /etc/nginx/ssl/
+
+# Expose standard HTTP and HTTPS ports
+EXPOSE 80 443
