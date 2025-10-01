@@ -8,6 +8,11 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 from unisphere.core.config import get_settings
 
+from . import greeting_model  # noqa: F401
+from . import group_chat_model  # noqa: F401  Ensure models are imported
+from . import user_model  # noqa: F401
+from . import user_place_model  # noqa: F401
+
 engine: AsyncEngine | None = None
 redis_client: redis.Redis | None = None
 settings = get_settings()
@@ -17,9 +22,20 @@ async def init_db():
     """Initialize the database engine and create tables."""
     global engine
 
-    # Use configured DATABASE_URL; must be an async driver URL (e.g., sqlite+aiosqlite, postgresql+asyncpg)
+    # Use configured DATABASE_URL; ensure it's an async driver URL
+    db_url = settings.DATABASE_URL or ""
+    if db_url.startswith("postgresql://"):
+        # Upgrade to async driver if plain psycopg-style URL provided
+        db_url = db_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    elif db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql+asyncpg://", 1)
+
+    # Fallback to local SQLite file for developer convenience
+    if not db_url:
+        db_url = "sqlite+aiosqlite:///./unisphere.db"
+
     engine = create_async_engine(
-        'postgresql+asyncpg://unidev:unidev@localhost:5432/unisphere_dev_db',
+        db_url,
         echo=False,
         future=True,
     )
@@ -78,6 +94,10 @@ async def close_redis():
     """Close Redis connection if initialized."""
     global redis_client
     if redis_client is not None:
-        await redis_client.close()
-        await redis_client.connection_pool.disconnect()
-        redis_client = None
+        try:
+            await redis_client.close()
+        finally:
+            try:
+                await redis_client.connection_pool.disconnect()
+            finally:
+                redis_client = None
