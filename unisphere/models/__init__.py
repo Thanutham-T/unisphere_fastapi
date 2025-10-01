@@ -33,7 +33,7 @@ async def init_db():
 
     # Use configured DATABASE_URL; must be an async driver URL (e.g., sqlite+aiosqlite, postgresql+asyncpg)
     engine = create_async_engine(
-        "postgresql+asyncpg://unidev:unidev@localhost:5432/unisphere_dev_db",
+        settings.DATABASE_URL,
         echo=False,
         future=True,
     )
