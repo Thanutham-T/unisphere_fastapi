@@ -43,3 +43,16 @@ dev = [
     "pytest-cov (>=7.0.0,<8.0.0)",
     "aiosqlite (>=0.21.0,<0.22.0)"
 ]
+
+[tool.ruff]
+# Exclude test files from certain linting rules
+[tool.ruff.lint.per-file-ignores]
+"test_*.py" = ["BLE001", "PLW0603"]  # Allow general exceptions and global statements in tests
+
+[tool.pylint]
+# Disable certain warnings for test files
+[tool.pylint.messages_control]
+disable = ["broad-except", "global-statement"]
+
+[tool.pylint.per-file-ignores]
+"test_*.py" = ["broad-except", "global-statement"]

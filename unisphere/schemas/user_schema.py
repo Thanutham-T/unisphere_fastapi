@@ -10,6 +10,7 @@ class UserBase(BaseModel):
     last_name: str
     email: EmailStr
     phone_number: Optional[str] = None
+    profile_image_url: Optional[str] = None
     role: str = "user"
 
 

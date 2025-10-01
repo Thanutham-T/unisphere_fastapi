@@ -155,6 +155,17 @@ async def get_me(current_user: SchemaUser = Depends(get_current_user)):
     return current_user
 
 
+@router.get(
+    "/profile",
+    summary="Get user profile",
+    description="Get current user profile information",
+    response_model=SchemaUser
+)
+async def get_profile(current_user: SchemaUser = Depends(get_current_user)):
+    """Get current user profile information"""
+    return current_user
+
+
 # Endpoint สำหรับ Flutter dropdowns
 @router.get(
     "/education-options",

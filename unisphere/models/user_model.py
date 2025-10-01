@@ -1,7 +1,11 @@
 from datetime import datetime
-from typing import Optional
+from typing import TYPE_CHECKING, List, Optional
 
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, Relationship, SQLModel
+
+if TYPE_CHECKING:
+    from unisphere.models.announcement_model import Announcement
+    from unisphere.models.event_model import Event
 
 
 # User schema
@@ -33,3 +37,8 @@ class User(UserBase, table=True):
     is_active: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.now)
     updated_at: datetime = Field(default_factory=datetime.now)
+
+    # Relationships
+    created_events: List["Event"] = Relationship(back_populates="creator")
+    created_announcements: List["Announcement"] = Relationship(
+        back_populates="creator")

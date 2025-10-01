@@ -175,8 +175,13 @@ class DBAuthService(AuthServiceInterface):
             if not user:
                 return None
 
-            # Update only provided fields
-            update_data = user_data.model_dump(exclude_unset=True)
+            # Update only provided fields (exclude None values)
+            update_data = user_data.model_dump(
+                exclude_unset=True, exclude_none=True)
+
+            if not update_data:
+                return user  # Return user as-is if nothing to update
+
             for field, value in update_data.items():
                 setattr(user, field, value)
 
@@ -192,5 +197,4 @@ class DBAuthService(AuthServiceInterface):
 
         except Exception as e:
             await self.session.rollback()
-            print(f"Error updating user profile: {e}")
-            return None
+            raise e  # Re-raise instead of returning None to see the actual error
