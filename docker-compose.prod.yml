@@ -1,6 +1,6 @@
 services:
   unisphere-prod:
-    image: thanutham/unisphere_fastapi:2981c17
+    image: thanutham/unisphere_fastapi:d894f46
     restart: unless-stopped
     env_file:
       - ./.env.prod
